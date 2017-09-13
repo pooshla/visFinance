@@ -1,8 +1,8 @@
 var contrib401k;
-var ssTaxRate;
-var medicareTaxRate;
-var stateTaxRate;
-var countyTaxRate;
+var ssTaxRate = 0.062;
+var medicareTaxRate = 0.0145;
+var stateTaxRate = ;//graduated
+var countyTaxRate = 0.0256;//flat rate
 var titheRate;
 
 var grossPay;
@@ -47,15 +47,15 @@ function loadUserValues(){
 							}, {
 								id:10,
 								name: "Social Security",
-								value: 0.062,
-								derVal: "percentage",
-								target: 100
+								value: ssTaxRate,
+								derVal: "sstax",
+								target: [7, 6]
 							}, {
 								id:11,
 								name: "Medicare",
-								value: 0.0145,
-								derVal: "percentage",
-								target: 100
+								value: medicareTaxRate,
+								derVal: "sstax",
+								target: [7, 6]
 							}, {
 								id:12,
 								name: "Maryland State Taxes",
@@ -104,42 +104,29 @@ function loadUserValues(){
 				derVal: "rollup",
 				children: [
 					{
-						id:100,
-						name: "Unversal Deductions",
-						derVal: "rollup",
-						children: [
-							{
-								id:3,
-								name: "Dental Insurance",
-								value: dentalInsurance
-							}, {
-								id:4,
-								name: "Health Insurance",
-								value: healthInsurance
-							}, {
-								id:5,
-								name: "HSA Contributions",
-								value: hsaContributions
-							}
-							// ,{
-								// id:35,
-								// name: "Vision Insurance",
-								// value: visionInsurance,
-							// }
-						]
+						id:3,
+						name: "Dental Insurance",
+						value: dentalInsurance
 					}, {
-						id: 101,
-						name: "Deductions (Excluded from SS)",
-						derVal: "rollup",
-						children: [
-							{
-								id:6,
-								name: "401K Contributions",
-								value: contrib401k,
-								target: 1,
-								derVal: "percentage"
-							}
-						]
+						id:4,
+						name: "Health Insurance",
+						value: healthInsurance
+					}, {
+						id:5,
+						name: "HSA Contributions",
+						value: hsaContributions
+					}
+					// ,{
+						// id:35,
+						// name: "Vision Insurance",
+						// value: visionInsurance,
+					// }
+					,{
+						id:6,
+						name: "401K Contributions",
+						value: contrib401k,
+						target: 1,
+						derVal: "percentage"
 					}
 				]
 			}

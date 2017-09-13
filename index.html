@@ -10,18 +10,22 @@
 		<script type="text/javascript" src="sankey.js"></script>
 		<script type="text/javascript" src="sunburst.js"></script>
 		<script type="text/javascript" src="fedtax.js"></script>
+		<script type="text/javascript" src="statetax.js"></script>
 		<script type="text/javascript" src="script.js"></script>
 
 		<link rel="stylesheet" type="text/css" href="style.css" />	
 	</head> 
 	<body>
+		<h2>Assumptions</h2>
 		<ul>
-			<li>Assumes biweekly pay which is assumed to be half of given income</li>
+			<li>biweekly pay which is assumed to be half of given income</li>
+			<li>single, no children</li>
+			<li>make under 100k</li>
 		</ul>
-		<h2>User values (per month)</h2>
+		<h2>User values (biweekly)</h2>
 		<table>
 			<tbody>
-				<tr><td>Gross Income ($)</td><td><input id="grossPayBox" value="2423.10" class="inputField"/></td></tr>
+				<tr><td>Gross Income ($)</td><td><input id="grossPayBox" value="3423.10" class="inputField"/></td></tr>
 				<tr><td>Vision Insurance Cost ($)</td><td><input id="visionInsuranceBox" value="0" class="inputField"/></td></tr>
 				<tr><td>Health Insurance Cost ($)</td><td><input id="healthInsuranceBox" value="24.46" class="inputField"/></td></tr>
 				<tr><td>Dental Insurance Cost ($)</td><td><input id="dentalInsuranceBox" value="5.54" class="inputField"/></td></tr>

@@ -252,6 +252,16 @@ function calculateDerivedValues(financeGraph){
 					} else {
 						stillNeedsWork = true;
 					}
+				} else if(node.derVal == "sstax"){
+					var target1 = getNodeById(financeGraph.nodes, node.target[0]);
+					var target2 = getNodeById(financeGraph.nodes, node.target[1]);
+					
+					if(target1.done && target2.done){
+						node.done = true;
+						node.value = node.value * (target1.value - target2.value);
+					} else {
+						stillNeedsWork = true;
+					}
 				} else if(node.derVal == "difference"){
 					if(node.target == "siblings"){
 						var parent = getNodeById(financeGraph.nodes, node.parentId);
