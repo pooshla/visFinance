@@ -20,11 +20,16 @@ var arc = d3.svg.arc()
     .endAngle(function(d) { return Math.max(0, Math.min(2 * Math.PI, x(d.x + d.dx))); })
     .innerRadius(function(d) { return Math.max(0, y(d.y)); })
     .outerRadius(function(d) { return Math.max(0, y(d.y + d.dy)); });
+
+var fontScale = d3.scale.linear()
+	.range([8, 30]);
 	
 var formatNumber = d3.format(",.2f"),    // zero decimal places
     format = function(d) { return formatNumber(d) + " " + units; },
     color = d3.scale.category20();
 
+var svg;	
+	
 var sankey, slink, snode, spath;
 
 var text, path;
@@ -32,12 +37,12 @@ var text, path;
 $(document).ready(function(){
 	loadUserValues();
 	
-	var svg = d3.select("#sankeyChart").append("svg")
+	svg = d3.select("#sankeyChart").append("svg")
 		.attr("width", width + margin.left + margin.right)
 		.attr("height", height + margin.top + margin.bottom)
 		.append("g")
-		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-				  
+		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");	
+	
 	sankey = d3.sankey()
 		.nodeWidth(36)
 		.nodePadding(40)
@@ -46,26 +51,40 @@ $(document).ready(function(){
 	spath = sankey.link();
 	
 	
-	normalizeBudget(financeTree);
-	var financeGraph = {nodes: [financeTree], links: []};
-	flatten(financeTree, financeGraph);
-	calculateDerivedValues(financeGraph);
-	updateGraphLinks(financeGraph);
+	normalizeBudget(financeTree);//
+	
+	var financeGraph = {nodes: [financeTree], links: []};//
+	
+	flatten(financeTree, financeGraph);//
+	
+	calculateDerivedValues(financeGraph);//
+	
+	updateGraphLinks(financeGraph);//
+	
 	readdCalcedValues(financeTree, financeGraph);
 	
 	//month data
 	var monthFinanceTree = $.extend(true, {}, financeTree);
 	recurseDouble(monthFinanceTree);
 	
+	
+	
 	var monthFinanceGraph = {nodes: [monthFinanceTree], links: []};
 	flatten(monthFinanceTree, monthFinanceGraph);
 	
+	
+	
 	var sankeyGraph = $.extend(true, {}, monthFinanceGraph);
+	
+	
 	
 	var valCache = {};
 	// return only the distinct / unique nodes
     sankeyGraph.nodes = d3.keys(d3.nest()
-		.key(function (d) {valCache[d.name] = d.value; return d.name; })
+		.key(function (d) {
+			valCache[d.name] = d.value; 
+			return d.name; 
+		})
 		.map(sankeyGraph.nodes));
 	   
     // loop through each link replacing the text with its index from node
@@ -86,6 +105,8 @@ $(document).ready(function(){
 		.nodes(sankeyGraph.nodes)
 		.links(sankeyGraph.links)
 		.layout(32);
+		
+	fontScale.domain(d3.extent(sankeyGraph.nodes, function(d) { return d.value }));
 
 	// add in the links	
 	slink = svg.append("g").selectAll(".link")
@@ -134,8 +155,14 @@ $(document).ready(function(){
 		.attr("dy", ".35em")
 		.attr("text-anchor", "end")
 		.attr("transform", null)
+		.style("fill", function(d) {
+			return d3.rgb(d.color).darker(2.4);
+		})
 		.text(function(d) { return d.name; })
-		.style("font-family", "sans-serif")
+		.style("font-size", function(d) {
+			//return "10px";
+			return Math.floor(fontScale(d.value)) + "px";
+		})
 		.filter(function(d) { return d.x < width / 2; })
 		.attr("x", 6 + sankey.nodeWidth())
 		.attr("text-anchor", "start");
@@ -175,11 +202,119 @@ $(document).ready(function(){
 	});
 	
 	$(".inputField").change(function(event){
-		grossPay = $("$grossPayBox").val();
-		dentalInsurance = $("$dentalInsuranceBox").val();
-		visionInsurance = $("$visionInsuranceBox").val();
-		healthInsurance = $("$healthInsuranceBox").val();
-		hsaContributions = $("$hsaContributionsBox").val();
+		grossPay = $("#grossPayBox").val();
+		dentalInsurance = $("#dentalInsuranceBox").val();
+		visionInsurance = $("#visionInsuranceBox").val();
+		healthInsurance = $("#healthInsuranceBox").val();
+		hsaContributions = $("#hsaContributionsBox").val();
+		
+		loadUserValues();
+		
+		normalizeBudget(financeTree);
+		var financeGraph = {nodes: [financeTree], links: []};
+		flatten(financeTree, financeGraph);
+		calculateDerivedValues(financeGraph);
+		updateGraphLinks(financeGraph);
+		readdCalcedValues(financeTree, financeGraph);
+		
+		//month data
+		var monthFinanceTree = $.extend(true, {}, financeTree);
+		recurseDouble(monthFinanceTree);
+		
+		var monthFinanceGraph = {nodes: [monthFinanceTree], links: []};
+		flatten(monthFinanceTree, monthFinanceGraph);
+		
+		var sankeyGraph = $.extend(true, {}, monthFinanceGraph);
+	
+		var valCache = {};
+		// return only the distinct / unique nodes
+		sankeyGraph.nodes = d3.keys(d3.nest()
+			.key(function (d) {valCache[d.name] = d.value; return d.name; })
+			.map(sankeyGraph.nodes));
+		      
+		// loop through each link replacing the text with its index from node
+		sankeyGraph.links.forEach(function (d, i) {
+			sankeyGraph.links[i].source = sankeyGraph.nodes.indexOf(sankeyGraph.links[i].source);
+			sankeyGraph.links[i].target = sankeyGraph.nodes.indexOf(sankeyGraph.links[i].target);
+		});
+
+		//now loop through each nodes to make nodes an array of objects
+		// rather than an array of strings
+		sankeyGraph.nodes.forEach(function (d, i) {
+			sankeyGraph.nodes[i] = { "name": d + " ($"+valCache[d]+")" };
+		});
+		
+		sankeyGraph.nodes.sort(function(a, b){return b.value - a.value;});
+		
+		sankey
+			.nodes(sankeyGraph.nodes)
+			.links(sankeyGraph.links)
+			.layout(32);
+			
+		sankey.relayout();
+		fontScale.domain(d3.extent(sankeyGraph.nodes, function(d) { return d.value }));
+
+		// add in the links	
+		svg.selectAll(".link")
+			.data(sankeyGraph.links)
+			.sort(function(a, b) { return b.dy - a.dy; })
+			.transition()
+			.duration(1300)
+			.attr("d", spath)
+			.style("stroke-width", function(d) { return Math.max(1, d.dy); });
+
+		// add in the nodes
+		svg.selectAll(".node")
+			.data(sankeyGraph.nodes)
+			.transition()
+			.duration(1300)
+			.attr("transform", function(d) { 
+				return "translate(" + d.x + "," + d.y + ")"; });
+
+		// add the rectangles for the nodes
+		svg.selectAll(".node rect")
+			.transition()
+			.duration(1300)
+			.attr("height", function(d) { return d.dy; });
+
+		// add in the title for the nodes
+		svg.selectAll(".node text")
+			.data(sankeyGraph.nodes)
+			.transition()
+			.duration(1300)
+			.attr("y", function(d) { return d.dy / 2; })
+			.text(function(d) { return d.name; })
+			.style("font-size", function(d) {
+				//return "10px";
+				return Math.floor(fontScale(d.value)) + "px";
+			});
+
+		/*
+		var sunburstSvg = d3.select("#sunburstChart").append("svg")
+			.attr("width", width)
+			.attr("height", height)
+			.append("g")
+			.attr("transform", "translate(" + width / 2 + "," + (height / 2 + 10) + ")");	  
+			  
+		var g = sunburstSvg.selectAll("g")
+			.data(partition.nodes(monthFinanceTree))
+			.enter().append("g");
+
+		path = g.append("path")
+			.attr("d", arc)
+			.style("fill", function(d) { return color(d.name); })
+			.on("click", click)
+			.on("mouseover", mouseover);
+
+		text = g.append("text")
+			.attr("transform", function(d) { return "rotate(" + computeTextRotation(d) + ")"; })
+			.attr("x", function(d) { return y(d.y); })
+			.attr("dx", "6") // margin
+			.attr("dy", ".35em") // vertical-align
+			.style("font-family", "sans-serif")
+			.text(function(d) { return d.name; });
+		});
+		*/
 	});
 });
 
@@ -322,6 +457,10 @@ function recurseDouble(node){
 	});
 }
 
+/*
+This function normalizes the values since income and deductions are based on a biweekly
+(roughly twice monthly) period, but costs are budgeted monthly
+*/
 function normalizeBudget(node){
 	$.each(node.children, function(key, child){
 		if(node.name != "Take Home")//budget is entered monthly, so dont double
@@ -332,17 +471,17 @@ function normalizeBudget(node){
 	});
 }
 
-function flatten(data, destGraph) {
-    $.each(data.children, function(key, val){
-		val.parentId = data.id;
-		destGraph.nodes.push(val);
+function flatten(node, destGraph) {
+    $.each(node.children, function(key, child){
+		child.parentId = node.id;
+		destGraph.nodes.push(child);
 		destGraph.links.push({
-			source: data.name,
-			target: val.name,
-			value: val.value
+			source: node.name,
+			target: child.name,
+			value: child.value
 		});
 		
-		flatten(val, destGraph);
+		flatten(child, destGraph);
 	});
 }
 

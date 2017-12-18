@@ -1,7 +1,7 @@
 var contrib401k;
-var ssTaxRate = 0.062;
-var medicareTaxRate = 0.0145;
-var stateTaxRate = ;//graduated
+var SOCIAL_SECURITY_TAX_RATE = 0.062;
+var MEDICARE_TAX_RATE = 0.0145;
+var stateTaxRate;//graduated
 var countyTaxRate = 0.0256;//flat rate
 var titheRate;
 
@@ -47,26 +47,24 @@ function loadUserValues(){
 							}, {
 								id:10,
 								name: "Social Security",
-								value: ssTaxRate,
+								value: SOCIAL_SECURITY_TAX_RATE,
 								derVal: "sstax",
 								target: [7, 6]
 							}, {
 								id:11,
 								name: "Medicare",
-								value: medicareTaxRate,
+								value: MEDICARE_TAX_RATE,
 								derVal: "sstax",
 								target: [7, 6]
 							}, {
 								id:12,
 								name: "Maryland State Taxes",
-								//value: 123.24,
 								value: stateTaxRate,
 								derVal: "percentage",
 								target: 7
 							}, {
 								id:13,
 								name: "Anne Arundel County Taxes",
-								//value: 64.86,
 								value: countyTaxRate,
 								derVal: "percentage",
 								target: 7
@@ -75,20 +73,17 @@ function loadUserValues(){
 					}, {
 						id:14,
 						name: "Net Pay",
-						//value: 1850.83,
 						derVal: "difference",
 						target: [7, 8],
 						children: [{
 								id: 15,
 								name: "Tithe",
-								//value: 185.08
 								value: titheRate,
 								derVal: "percentage",
 								target: 14
 							}, {
 								id: 16,
 								name: "Take Home",
-								//value: 1665.75,
 								derVal: "difference",
 								target: [14, 15],
 								children: [
@@ -135,9 +130,9 @@ function loadUserValues(){
 	
 	$("#budgetTable tr").each(function(key, item){
 		financeTree.children[0].children[1].children[1].children.push({
+			id: Math.floor(Math.random() * 1000000),
 			name: $(item).find("td:eq(0)").html(),
 			value: Number($(item).find(".inputField").val())
 		});
 	});
-	
 }
