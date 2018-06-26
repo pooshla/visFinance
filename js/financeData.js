@@ -59,14 +59,12 @@ function loadUserValues(){
 							}, {
 								id:12,
 								name: "Maryland State Taxes",
-								value: stateTaxRate,
-								derVal: "percentage",
+								derVal: "statetax",
 								target: 7
 							}, {
 								id:13,
 								name: "Anne Arundel County Taxes",
-								value: countyTaxRate,
-								derVal: "percentage",
+								derVal: "countytax",
 								target: 7
 							}
 						]

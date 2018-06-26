@@ -273,6 +273,7 @@ $(document).ready(function(){
 
 		// add the rectangles for the nodes
 		svg.selectAll(".node rect")
+			.data(sankeyGraph.nodes)
 			.transition()
 			.duration(1300)
 			.attr("height", function(d) { return d.dy; });
@@ -383,7 +384,25 @@ function calculateDerivedValues(financeGraph){
 					
 					if(target.done){
 						node.done = true;
-						node.value = c(0, 0, target.value);
+						node.value = c(0, 1, target.value);
+					} else {
+						stillNeedsWork = true;
+					}
+				} else if(node.derVal == "statetax"){
+					var target = getNodeById(financeGraph.nodes, node.target);
+					
+					if(target.done){
+						node.done = true;
+						node.value = s2(0, 1, target.value);
+					} else {
+						stillNeedsWork = true;
+					}
+				} else if(node.derVal == "countytax"){
+					var target = getNodeById(financeGraph.nodes, node.target);
+					
+					if(target.done){
+						node.done = true;
+						node.value = c2(0, 1, target.value);
 					} else {
 						stillNeedsWork = true;
 					}
@@ -393,7 +412,7 @@ function calculateDerivedValues(financeGraph){
 					
 					if(target1.done && target2.done){
 						node.done = true;
-						node.value = node.value * (target1.value - target2.value);
+						node.value = node.value * (target1.value + target2.value);//social security does not exclude 401k contributions surprisingly
 					} else {
 						stillNeedsWork = true;
 					}
@@ -513,6 +532,10 @@ function mouseover(d) {
 // Restore everything to full opacity when moving off the visualization.
 function mouseleave(d) {
 	$("#valueBox").html("");
+}
+
+function round2(val){
+	return Math.round(val * 100) / 100;
 }
 
 // the function for moving the nodes

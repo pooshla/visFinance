@@ -31,7 +31,7 @@ c = function(m, a, g) { // Returns Federal Income Tax amount (Married, Allowance
         if (b[i] > g)  {
             g -= b[i-1]; // Get taxable income
             b = w[(m==1) ? 'm' : 's'][b[i-1]]; // Set bracket
-            return ((b.p*(g)) + b.s); // Taxable income * Tax Rate + Base Tax, per IRS Circular E table 5
+            return round2((b.p*(g)) + b.s); // Taxable income * Tax Rate + Base Tax, per IRS Circular E table 5
         }
     }
 }
