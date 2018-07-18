@@ -50,3 +50,7 @@ c2 = function(m, a, g) { // Returns Federal Income Tax amount (Married, Allowanc
         }
     }
 }
+
+function round2(val){
+	return Math.round(val * 100) / 100;
+}
