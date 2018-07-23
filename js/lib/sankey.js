@@ -91,12 +91,6 @@ d3.sankey = function() {
       source.sourceLinks.push(link);
       target.targetLinks.push(link);
     });
-	
-	//TOMS EDIT
-	/*nodes.forEach(function(node) {
-		node.sourceLinks.sort();
-		node.targetLinks.sort();
-	});*/
   }
 
   // Compute the value (size) of each node by summing the associated links.
@@ -133,7 +127,7 @@ d3.sankey = function() {
 
     //
     moveSinksRight(x);
-    scaleNodeBreadths((size[0] - nodeWidth) / (x - 1));
+    scaleNodeBreadths((width - nodeWidth) / (x - 1));
   }
 
   function moveSourcesRight() {
@@ -231,7 +225,7 @@ d3.sankey = function() {
             i;
 
         // Push any overlapping nodes down.
-        //nodes.sort(ascendingDepth);
+        nodes.sort(ascendingDepth);
         for (i = 0; i < n; ++i) {
           node = nodes[i];
           dy = y0 - node.y;
@@ -260,11 +254,10 @@ d3.sankey = function() {
     }
   }
 
-  
   function computeLinkDepths() {
     nodes.forEach(function(node) {
-      node.sourceLinks.sort(typeSort); // ascendingTargetDepth
-      node.targetLinks.sort(typeSort); // was ascendingTargetDepth
+      node.sourceLinks.sort(ascendingTargetDepth);
+      node.targetLinks.sort(ascendingSourceDepth);
     });
     nodes.forEach(function(node) {
       var sy = 0, ty = 0;
@@ -285,17 +278,6 @@ d3.sankey = function() {
     function ascendingTargetDepth(a, b) {
       return a.target.y - b.target.y;
     }
-	
-	// function to sort by link type
-	
-	function typeSort(a, b) {
-		if(a.type < b.type) return -1;
-		if(a.type > b.type) return 1;
-    }
-	
-
-	
-	
   }
 
   function center(node) {

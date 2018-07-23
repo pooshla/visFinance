@@ -6,29 +6,9 @@ $("document").ready(function(){
 		data: {
 			SOCIAL_SECURITY_TAX_RATE: 0.062,
 			MEDICARE_TAX_RATE: 0.0145,
-			ANNE_ARUNDEL_COUNTY_TAX_RATE: 0.0256,
-			MARYLAND_STATE_HARDCODED_WRONG_TAX_RATE: 0.04429223281624161119160764525684,
-			ANNE_ARUNDEL_COUNTY_HARDCODED_WRONG_TAX_RATE: 0.02331134595834219921034588741518,
-			budgetData: [
-				{name: "Mortgage", value: 1229.58},
-				{name: "Property Tax", value: 279.45},
-				{name: "Condo Fee", value: 157},
-				{name: "Car Insurance", value: 123.77},
-				{name: "Condo Insurance", value: 29.48},
-				{name: "Internet", value: 96.89},
-				{name: "Mobile Phone", value: 50},
-				{name: "Counselling", value: 200},
-				{name: "Electricity", value: 40},
-				{name: "Gas", value: 70},
-				{name: "Restaurants", value: 25},
-				{name: "Fast Food", value: 25},
-				{name: "Gifts", value: 25},
-				{name: "Car Services", value: 50},
-				{name: "Entertainment", value: 35},
-				{name: "Groceries", value: 70}
-			],
+			ANNE_ARUNDEL_COUNTY_TAX_RATE: 0.025,
 			units: "Dollars",
-			paychecksPerMonth: 1,
+			paychecksPerMonth: 2,
 			//properties are per paycheck
 			grossIncome: 3790.91,
 			visionInsurance: 0,
@@ -36,56 +16,81 @@ $("document").ready(function(){
 			dentalInsurance: 5.54,
 			hsaContribution: 55.77,
 			retirementContributionPercent: 12,
-			tithePercent: 10
+			tithePercent: 10,
+			budgetData: [
+				{
+					id: Math.floor(Math.random() * 1000000),
+					derVal: "difference", 
+					target:"siblings",
+					name:"Savings",
+					hidden: true
+				},
+				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Mortgage", value: 1229.58},
+				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Property Tax", value: 279.45},
+				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Condo Fee", value: 157},
+				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Car Insurance", value: 123.77},
+				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Condo Insurance", value: 29.48},
+				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Internet", value: 96.89},
+				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Mobile Phone", value: 50},
+				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Counselling", value: 200},
+				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Electricity", value: 40},
+				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Gas", value: 70},
+				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Restaurants", value: 25},
+				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Fast Food", value: 25},
+				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Gifts", value: 25},
+				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Car Services", value: 50},
+				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Entertainment", value: 35},
+				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Groceries", value: 70}
+			]
 		},
 		computed: {
-			unprocessedFinanceTree: function() {
-				var financeTree = {
+			financeTreeStructure: function() {
+				return {
 					children: {
 						grossPay:{
-							id: Math.floor(Math.random() * 1000000),
+							id:  Math.floor(Math.random() * 1000000),
 							name: "Gross Pay",
-							value: this.grossIncome * this.paychecksPerMonth,
+							value: this.grossIncome,
 							children: {
 								fedTaxableIncome: {
-									id:Math.floor(Math.random() * 1000000),
+									id:  Math.floor(Math.random() * 1000000),
 									name: "Federal Taxable Income",
 									derVal: "difference",
 									target: ["grossPay", "deductions"],
 									children: {
 										taxes: {
-											id:Math.floor(Math.random() * 1000000),
+											id:  Math.floor(Math.random() * 1000000),
 											name: "Taxes",
 											derVal: "rollup",
 											children: {
 												federalTaxes: {
-													id:Math.floor(Math.random() * 1000000),
+													id:  Math.floor(Math.random() * 1000000),
 													name: "Federal Taxes",
 													derVal: "fedtax",
 													target: "fedTaxableIncome"
 												}, 
 												socialSecurity: {
-													id:Math.floor(Math.random() * 1000000),
+													id: Math.floor(Math.random() * 1000000),
 													name: "Social Security",
 													value: this.SOCIAL_SECURITY_TAX_RATE,
 													derVal: "sstax",
 													target: ["fedTaxableIncome", "retirementContribution"]
 												}, 
 												medicare: {
-													id:Math.floor(Math.random() * 1000000),
+													id: Math.floor(Math.random() * 1000000),
 													name: "Medicare",
 													value: this.MEDICARE_TAX_RATE,
 													derVal: "sstax",
 													target: ["fedTaxableIncome", "retirementContribution"]
 												}, 
 												stateTaxes: {
-													id:Math.floor(Math.random() * 1000000),
+													id: Math.floor(Math.random() * 1000000),
 													name: "Maryland State Taxes",
 													derVal: "statetax",
 													target: "fedTaxableIncome"
 												}, 
 												countyTaxes: {
-													id:Math.floor(Math.random() * 1000000),
+													id: Math.floor(Math.random() * 1000000),
 													name: "Anne Arundel County Taxes",
 													derVal: "countytax",
 													target: "fedTaxableIncome"
@@ -93,7 +98,7 @@ $("document").ready(function(){
 											}
 										}, 
 										netPay: {
-											id:Math.floor(Math.random() * 1000000),
+											id: Math.floor(Math.random() * 1000000),
 											name: "Net Pay",
 											derVal: "difference",
 											target: ["fedTaxableIncome", "taxes"],
@@ -101,7 +106,7 @@ $("document").ready(function(){
 												tithe: {
 													id: Math.floor(Math.random() * 1000000),
 													name: "Tithe",
-													value: this.tithePercent / 100,
+													value: this.tithePercent,
 													derVal: "percentage",
 													target: "netPay"
 												}, 
@@ -110,38 +115,31 @@ $("document").ready(function(){
 													name: "Take Home",
 													derVal: "difference",
 													target: ["netPay", "tithe"],
-													children: {
-														savings: {
-															id: Math.floor(Math.random() * 1000000),
-															derVal: "difference", 
-															target:"siblings",
-															name:"Savings"
-														}
-													}
+													children: this.budgetData
 												}
 											}
 										}
 									}
 								}, 
 								deductions: {
-									id:Math.floor(Math.random() * 1000000),
+									id: Math.floor(Math.random() * 1000000),
 									name: "Deductions",
 									derVal: "rollup",
 									children: {
 										dentalInsurance: {
-											id:Math.floor(Math.random() * 1000000),
+											id: Math.floor(Math.random() * 1000000),
 											name: "Dental Insurance",
-											value: this.dentalInsurance * this.paychecksPerMonth
+											value: this.dentalInsurance
 										}, 
 										healthInsurance: {
-											id:Math.floor(Math.random() * 1000000),
+											id: Math.floor(Math.random() * 1000000),
 											name: "Health Insurance",
-											value: this.healthInsurance * this.paychecksPerMonth
+											value: this.healthInsurance
 										}, 
 										hsaContribution: {
-											id:Math.floor(Math.random() * 1000000),
+											id: Math.floor(Math.random() * 1000000),
 											name: "HSA Contributions",
-											value: this.hsaContribution * this.paychecksPerMonth
+											value: this.hsaContribution
 										},
 										// visionInsurance: {
 											// id:Math.floor(Math.random() * 1000000),
@@ -149,7 +147,7 @@ $("document").ready(function(){
 											// value: visionInsurance,
 										// },
 										retirementContribution: {
-											id:Math.floor(Math.random() * 1000000),
+											id: Math.floor(Math.random() * 1000000),
 											name: "401K Contributions",
 											value: this.retirementContributionPercent,
 											target: "grossPay",
@@ -161,53 +159,34 @@ $("document").ready(function(){
 						}
 					}
 				};
-				//these dont need to be normalized because theyre monthly...
-				$.each(this.budgetData, function(key, item){
-					financeTree.children.grossPay.children.fedTaxableIncome.children.netPay.children.takeHome.children[item.name.toLowerCase().replace(new RegExp(" ", 'g'), "")] = {
-						id: Math.floor(Math.random() * 1000000),
-						name: item.name,
-						value: item.value
-					};
-				});
-				
-				console.log("called unprocessedFinanceTree");
-				
-				return financeTree;
 			},
 			financeTree: function() {
-				//get the graph which will calculate values which will apply
-				//to this tree as well. a bit opaque but its convoluted right now...
-				//this.financeGraph;
-				
 				this.calculateDerivedValues();
-				return this.unprocessedFinanceTree;
+				return this.financeTreeStructure;
 			},
 			financeGraph: function(){
 				//dont need to call calculate because reference financeTree will get it
 				var financeGraph = this.flattenTree(this.financeTree);
-				//this.calculateDerivedValues();
-				console.log("called financeGraph");
 				return financeGraph;
 			}
 		},
 		methods: {
 			flattenTree: function(node){
-				//console.log(node);
 				var graph = {
 					nodes: [],
 					links: []
 				};
 				
-				//graph.nodes.push(node);
-				
 				$.each(node.children, function(key, child){
 					child.parentId = node.id;
 					child.ref = key;
-					graph.links.push({
-						source: node.name,
-						target: child.name,
-						value: child.value
-					});
+					if(node.name != undefined){//edge case for root node
+						graph.links.push({
+							source: node.name,
+							target: child.name,
+							value: child.value
+						});
+					}
 					graph.nodes.push(child);
 					
 					var childGraph = mainComponent.flattenTree(child);
@@ -221,22 +200,14 @@ $("document").ready(function(){
 			//and the tree and graph point to the same instances, calculating values
 			//for the graph will also apply to the tree
 			calculateDerivedValues: function(){
-				console.log("called calculate");
-				
 				var stillNeedsWork = true;
-				var financeGraph = this.flattenTree(this.unprocessedFinanceTree);
-				
-				console.log(financeGraph);
+				var financeGraph = this.flattenTree(this.financeTreeStructure);
 				
 				while(stillNeedsWork){
 					stillNeedsWork = false;
 					
 					$.each(financeGraph.nodes, function(key, node){
-						console.log(node);
-						
 						if(node.done == undefined || !node.done){
-							console.log(node.name + " " + node.value);
-							
 							if(node.derVal == undefined){
 								node.done = true;
 								return;
@@ -272,7 +243,7 @@ $("document").ready(function(){
 								
 								if(target.done){
 									node.done = true;
-									node.value = c(0, 1, target.value);
+									node.value = c(0, 1, mainComponent.paychecksPerMonth, target.value);
 								} else {
 									stillNeedsWork = true;
 								}
@@ -281,7 +252,7 @@ $("document").ready(function(){
 								
 								if(target.done){
 									node.done = true;
-									node.value = s2(0, 1, target.value);
+									node.value = s2(0, 1, mainComponent.paychecksPerMonth, target.value);
 								} else {
 									stillNeedsWork = true;
 								}
@@ -290,7 +261,7 @@ $("document").ready(function(){
 								
 								if(target.done){
 									node.done = true;
-									node.value = c2(0, 1, target.value);
+									node.value = c2(0, 1, mainComponent.paychecksPerMonth, target.value);
 								} else {
 									stillNeedsWork = true;
 								}
@@ -305,18 +276,13 @@ $("document").ready(function(){
 									stillNeedsWork = true;
 								}
 							} else if(node.derVal == "difference"){
-								//console.log("here 1");
-								
 								if(node.target == "siblings"){
 									var parent = mainComponent.getNodeById(financeGraph.nodes, node.parentId);
 									var tmpSum = 0;
 									var done = true;
 									
-									//console.log("here 2");
-									
 									$.each(parent.children, function(key2, val2){
 										if(val2.id != node.id){//exclude itself
-											//console.log(val2);
 											if(!val2.done){
 												done = false;
 												return;
@@ -327,18 +293,14 @@ $("document").ready(function(){
 									
 									if(done && parent.done){
 										node.done = true;
-										node.value = parent.value - tmpSum;
+										//TODO: sloppy temporarily scale parent value so result will be correct
+										node.value = (parent.value * mainComponent.paychecksPerMonth) - tmpSum;
 									} else {
 										stillNeedsWork =  true;
 									}
 								} else {
 									var target1 = mainComponent.getNodeByRef(financeGraph.nodes, node.target[0]);
 									var target2 = mainComponent.getNodeByRef(financeGraph.nodes, node.target[1]);
-									
-									//console.log("here 3");
-									
-									//console.log(target1);
-									//console.log(target2);
 									if(target1.done && target2.done){
 										node.done = true;
 										node.value = target1.value - target2.value;
@@ -347,12 +309,19 @@ $("document").ready(function(){
 									}
 								}
 							}
-							
-							console.log(node.name + " " + node.value);
-							//alert();
 						}
 					});
 				}
+				
+				//we calculated things on a per-paycheck level. now lets scale everything for the month
+				$.each(financeGraph.nodes, function(key, node){
+					if(!node.isBudget){
+						if(node.baseValue == undefined)
+							node.baseValue = node.value;
+						
+						node.value = node.baseValue * mainComponent.paychecksPerMonth;
+					}
+				});
 			},
 			getNodeByName: function(nodeList, name){
 				for(var i in nodeList){
@@ -371,11 +340,49 @@ $("document").ready(function(){
 					if(nodeList[i].ref == ref)
 						return nodeList[i];
 				}
+			},
+			generateId: function(){
+				return Math.floor(Math.random() * 1000000);
+			},
+			addBudgetItem: function(){
+				this.budgetData.push({
+					id: Math.floor(Math.random() * 1000000),
+					name: "test",
+					value: 200,
+					isBudget: true
+				});
+			},
+			removeBudgetItem: function(itemName){
+				for(var key in this.budgetData){
+					if(this.budgetData[key].name == itemName){
+						this.budgetData.splice(key, 1);
+						break;
+					}
+				}
+			},
+			financeTreeToString: function(node, level){
+				if(level == undefined)
+					level = -1;
+				
+				console.log(("-".repeat(2 * level)) + node.name + ": " + node.value);
+				$.each(node.children, function(key, child){
+					mainComponent.financeTreeToString(child, level + 1);
+				});
 			}
+		},
+		updated: function(){
+			console.log("called updated");
+			updateSunburstDiagram();
+			updateSankeyDiagram();
+			//mainComponent.financeTreeToString(mainComponent.financeTree, 0);
 		}
 	});
 	
 	initializeGuiComponents();
+	//mainComponent.financeTreeToString(mainComponent.financeTree, 0);
+	
+	drawSankeyDiagram();
+	drawSunburstDiagram();
 });
 
 function initializeGuiComponents() {
@@ -389,99 +396,4 @@ function initializeGuiComponents() {
 	});
 	
 	$("button").button();
-	
-	/*
-	$(".inputField").change(function(event){
-		var sankeyGraph = $.extend(true, {}, monthFinanceGraph);
-	
-		var valCache = {};
-		// return only the distinct / unique nodes
-		sankeyGraph.nodes = d3.keys(d3.nest()
-			.key(function (d) {valCache[d.name] = d.value; return d.name; })
-			.map(sankeyGraph.nodes));
-		      
-		// loop through each link replacing the text with its index from node
-		sankeyGraph.links.forEach(function (d, i) {
-			sankeyGraph.links[i].source = sankeyGraph.nodes.indexOf(sankeyGraph.links[i].source);
-			sankeyGraph.links[i].target = sankeyGraph.nodes.indexOf(sankeyGraph.links[i].target);
-		});
-
-		//now loop through each nodes to make nodes an array of objects
-		// rather than an array of strings
-		sankeyGraph.nodes.forEach(function (d, i) {
-			sankeyGraph.nodes[i] = { "name": d + " ($"+valCache[d]+")" };
-		});
-		
-		sankeyGraph.nodes.sort(function(a, b){return b.value - a.value;});
-		
-		sankey
-			.nodes(sankeyGraph.nodes)
-			.links(sankeyGraph.links)
-			.layout(32);
-			
-		sankey.relayout();
-		fontScale.domain(d3.extent(sankeyGraph.nodes, function(d) { return d.value }));
-
-		// add in the links	
-		svg.selectAll(".link")
-			.data(sankeyGraph.links)
-			.sort(function(a, b) { return b.dy - a.dy; })
-			.transition()
-			.duration(1300)
-			.attr("d", spath)
-			.style("stroke-width", function(d) { return Math.max(1, d.dy); });
-
-		// add in the nodes
-		svg.selectAll(".node")
-			.data(sankeyGraph.nodes)
-			.transition()
-			.duration(1300)
-			.attr("transform", function(d) { 
-				return "translate(" + d.x + "," + d.y + ")"; });
-
-		// add the rectangles for the nodes
-		svg.selectAll(".node rect")
-			.data(sankeyGraph.nodes)
-			.transition()
-			.duration(1300)
-			.attr("height", function(d) { return d.dy; });
-
-		// add in the title for the nodes
-		svg.selectAll(".node text")
-			.data(sankeyGraph.nodes)
-			.transition()
-			.duration(1300)
-			.attr("y", function(d) { return d.dy / 2; })
-			.text(function(d) { return d.name; })
-			.style("font-size", function(d) {
-				//return "10px";
-				return Math.floor(fontScale(d.value)) + "px";
-			});
-
-		var sunburstSvg = d3.select("#sunburstChart").append("svg")
-			.attr("width", width)
-			.attr("height", height)
-			.append("g")
-			.attr("transform", "translate(" + width / 2 + "," + (height / 2 + 10) + ")");	  
-			  
-		var g = sunburstSvg.selectAll("g")
-			.data(partition.nodes(monthFinanceTree))
-			.enter().append("g");
-
-		path = g.append("path")
-			.attr("d", arc)
-			.style("fill", function(d) { return color(d.name); })
-			.on("click", click)
-			.on("mouseover", mouseover);
-
-		text = g.append("text")
-			.attr("transform", function(d) { return "rotate(" + computeTextRotation(d) + ")"; })
-			.attr("x", function(d) { return y(d.y); })
-			.attr("dx", "6") // margin
-			.attr("dy", ".35em") // vertical-align
-			.style("font-family", "sans-serif")
-			.text(function(d) { return d.name; });
-		});
-	});
-	*/
 }

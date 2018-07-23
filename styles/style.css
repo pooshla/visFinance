@@ -46,8 +46,13 @@ body {
 #mainContent {
 	float: left;
 	clear: both;
+	width: 100%;
 }
 
+#valueBox { 
+	position: absolute;
+	left: 10px;
+}
 
 .infoContainer{
 	float: left;
@@ -77,6 +82,25 @@ body {
     margin: 20px;
     border: thin solid #ccc;
     border-radius: 5px;
+	position: relative;
+}
+
+.deleteTd{
+	color: #dc0000;
+	padding-top: 3px;
+}
+
+.budgetNameField{
+	width: 115px;
+}
+
+.budgetValueField{
+	width: 50px;
+}
+
+#newBudgetItemBtn {
+	margin-left: 2px;
+    margin-top: 3px;
 }
 
 .node rect {

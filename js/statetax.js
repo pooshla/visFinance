@@ -1,13 +1,15 @@
-// Bi-Weekly Employee Income Withholding Calculator by GitHub#pooshla
-// Based on Maryland Tax Sheet - http://taxes.marylandtaxes.com/Business_Taxes/Business_Tax_Types/Income_Tax/Employer_Withholding/Withholding_Tables/pmtables/2012/0250.pdf
+// Anne Arundel County Maryland Employee Income Withholding Calculator by GitHub#pooshla
+// Based on Maryland Tax Sheet - http://taxes.marylandtaxes.gov/Business_Taxes/Business_Tax_Types/Income_Tax/Employer_Withholding/Withholding_Tables/pmtables/2018/.0250.pdf
 // Per the "Percentage Method"
+var countyTaxRate = 0.025;
 var  w2 = {
+	//subtract out the county tax rate so that we can calculate it separately
     s : { // Single
-        0    : { p : 0.0475, s : 0 },
-        3846   : { p: 0.05, s: 139.42 },
-        4808  : { p: 0.0525, s: 175.48 },
-        5769  : { p: 0.055, s: 212.74 },
-        9615 : { p: 0.0575, s: 366.59 }
+        0    : { p : 0.0725- countyTaxRate, s : 0 },
+        1923   : { p: 0.075 - countyTaxRate, s: 139.42 },
+        2404  : { p: 0.0775 - countyTaxRate, s: 175.48 },
+        2885  : { p: 0.08 - countyTaxRate, s: 212.74 },
+        4808 : { p: 0.0825 - countyTaxRate, s: 366.59 }
     },
     m : { // Married
         0    : { p : 0, s : 0 },
@@ -19,34 +21,48 @@ var  w2 = {
         8079 : { p : 0.35, s : 2140.93 },
         9105 : { p : 0.396, s : 2500.03 }
     }
-},
-sd = {
-	rate: .15,
-	min: 58.05,
-	max: 77.00
-},
-aar = 0.025,
-ba2 = 123.08, // 1 Allowance
-s2 = function(m, a, g) { // Returns Federal Income Tax amount (Married, Allowances, Gross Income)
-	g -= Math.max(Math.min((sd.rate * g), sd.max), sd.min);
-    g -= (ba2*a); // Pay after allowances
+};
+var exemptions = {//keyed on paychecks per month
+	4: {//weekly
+		exemption: 61.54,
+		min: 29,
+		max: 38.55
+	},
+	2: {//biweekly
+		exemption: 123.08,
+		min: 58.05,
+		max: 77
+	},
+	1: {//monthly
+		exemption: 266.67,
+		min: 125,
+		max: 167
+	}
+};
+var sdr = .15;
+var ba2 = 61.54; // 1 weekly exemption
+
+function s2(m, a, p, g) { // Returns State Income Tax amount (Married, Allowances, Paychecks Per Month, Gross Income)
+	g -= Math.max(Math.min((sdr * g), exemptions[p].max), exemptions[p].min);
+    g -= (ba2 * p * a); // Pay after allowances
     var b = Object.keys(w2[(m==1) ? 'm' : 's']); //Married?
     for (var i = 0; i < b.length; i++) { // Find bracket
-        if (b[i] > g)  {
-            g -= b[i-1]; // Get taxable income
+        if (b[i] * p > g)  {
+            g -= b[i-1] * p; // Get taxable income
             b = w2[(m==1) ? 'm' : 's'][b[i-1]]; // Set bracket
-            return round2((b.p*(g)) + b.s); // Taxable income * Tax Rate + Base Tax, per IRS Circular E table 5
+            return round2((b.p*(g)) + (b.s * p)); // Taxable income * Tax Rate + Base Tax, per IRS Circular E table 5
         }
     }
-},
-c2 = function(m, a, g) { // Returns Federal Income Tax amount (Married, Allowances, Gross Income)
-	g -= Math.max(Math.min((sd.rate * g), sd.max), sd.min);
-    g -= (ba2*a); // Pay after allowances
+}
+
+function c2(m, a, p, g) { // Returns County Income Tax amount (Married, Allowances, Paychecks Per Month, Gross Income)
+	g -= Math.max(Math.min((sdr * g), exemptions[p].max), exemptions[p].min);
+    g -= (ba2 * p * a); // Pay after allowances
     var b = Object.keys(w2[(m==1) ? 'm' : 's']); //Married?
     for (var i = 0; i < b.length; i++) { // Find bracket
-        if (b[i] > g)  {
-            g -= b[i-1]; // Get taxable income
-            return round2(aar*(g)); // Taxable income * Tax Rate + Base Tax, per IRS Circular E table 5
+        if (b[i] * p > g)  {
+            g -= b[i-1] * p; // Get taxable income
+            return round2(countyTaxRate * g); // county tax rate * taxable income
         }
     }
 }

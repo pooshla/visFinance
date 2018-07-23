@@ -34,6 +34,20 @@
 		</div>
 		<div id="mainContent">
 			<div id="leftCol">
+				<div id="budgetContainer" class="infoContainer">
+					<h2>Budget Table (Monthly)</h2>
+					<table id="budgetTable">
+						<tbody>
+							<tr v-if="!budgetItem.hidden" v-for="budgetItem in budgetData">
+								<td class="deleteTd"><i class="fas fa-trash" v-on:click="removeBudgetItem(budgetItem.name)"></i></td>
+								<td><input class="inputField budgetNameField" v-model="budgetItem.name"/></td>
+								<td><input class="inputField budgetValueField" v-model.number="budgetItem.value"/></td>
+							</tr>
+						</tbody>
+					</table>
+					<i id="newBudgetItemBtn" class="fas fa-plus" v-on:click="addBudgetItem"></i>
+				</div>
+			
 				<div class="infoContainer">
 					<h2>I get paid...</h2>
 					<input type="radio" name="scale" class="scaleBtn" value="4" v-model.number="paychecksPerMonth" checked="checked">Weekly</input>
@@ -56,25 +70,15 @@
 					</table>
 				</div>
 				
-				<div id="budgetContainer" class="infoContainer">
-					<h2>Budget Table (Monthly)</h2>
-					<table id="budgetTable">
-						<tbody>
-							<tr v-for="budgetItem in budgetData">
-								<td>{{budgetItem.name}}</td>
-								<td><input class="inputField" v-model.number="budgetItem.value"/></td>
-							</tr>
-						</tbody>
-					</table>
-					
-					<button>Recalculate</button>
-				</div>
+				
 			</div>
 			
 			
-			<p id="valueBox"></p>
+			
 			<div id="sankeyChart" class="chartContainer"></div>
-			<div id="sunburstChart" class="chartContainer"></div>
+			<div id="sunburstChart" class="chartContainer">
+				<p id="valueBox"></p>
+			</div>
 		<div>
 		<div id="infoDialog">
 			<ul>
