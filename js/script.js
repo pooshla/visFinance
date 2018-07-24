@@ -10,7 +10,8 @@ $("document").ready(function(){
 			units: "Dollars",
 			paychecksPerMonth: 2,
 			//properties are per paycheck
-			grossIncome: 3790.91,
+			//grossIncome: 3790.91,
+			grossIncome: 3500,
 			visionInsurance: 0,
 			healthInsurance: 26.77,
 			dentalInsurance: 5.54,
@@ -18,29 +19,30 @@ $("document").ready(function(){
 			retirementContributionPercent: 12,
 			tithePercent: 10,
 			budgetData: [
+				//budget ids 50+
 				{
-					id: Math.floor(Math.random() * 1000000),
+					id: 50,
 					derVal: "difference", 
 					target:"siblings",
 					name:"Savings",
 					hidden: true
 				},
-				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Mortgage", value: 1229.58},
-				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Property Tax", value: 279.45},
-				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Condo Fee", value: 157},
-				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Car Insurance", value: 123.77},
-				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Condo Insurance", value: 29.48},
-				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Internet", value: 96.89},
-				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Mobile Phone", value: 50},
-				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Counselling", value: 200},
-				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Electricity", value: 40},
-				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Gas", value: 70},
-				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Restaurants", value: 25},
-				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Fast Food", value: 25},
-				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Gifts", value: 25},
-				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Car Services", value: 50},
-				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Entertainment", value: 35},
-				{id: Math.floor(Math.random() * 1000000), isBudget: true, name: "Groceries", value: 70}
+				{id: 51, isBudget: true, name: "Mortgage", value: 1229.58},
+				{id: 52, isBudget: true, name: "Property Tax", value: 279.45},
+				{id: 53, isBudget: true, name: "Condo Fee", value: 157},
+				{id: 54, isBudget: true, name: "Car Insurance", value: 123.77},
+				{id: 55, isBudget: true, name: "Condo Insurance", value: 29.48},
+				{id: 56, isBudget: true, name: "Internet", value: 96.89},
+				{id: 57, isBudget: true, name: "Mobile Phone", value: 50},
+				// {id: 58, isBudget: true, name: "Counselling", value: 200},
+				{id: 59, isBudget: true, name: "Electricity", value: 40},
+				{id: 60, isBudget: true, name: "Gas", value: 70},
+				{id: 61, isBudget: true, name: "Restaurants", value: 25},
+				{id: 62, isBudget: true, name: "Fast Food", value: 25},
+				{id: 63, isBudget: true, name: "Gifts", value: 25},
+				{id: 64, isBudget: true, name: "Car Services", value: 50},
+				{id: 65, isBudget: true, name: "Entertainment", value: 35},
+				{id: 66, isBudget: true, name: "Groceries", value: 70}
 			]
 		},
 		computed: {
@@ -48,49 +50,49 @@ $("document").ready(function(){
 				return {
 					children: {
 						grossPay:{
-							id:  Math.floor(Math.random() * 1000000),
+							id:  1,
 							name: "Gross Pay",
 							value: this.grossIncome,
 							children: {
 								fedTaxableIncome: {
-									id:  Math.floor(Math.random() * 1000000),
+									id:  8,
 									name: "Federal Taxable Income",
 									derVal: "difference",
 									target: ["grossPay", "deductions"],
 									children: {
 										taxes: {
-											id:  Math.floor(Math.random() * 1000000),
+											id:  9,
 											name: "Taxes",
 											derVal: "rollup",
 											children: {
 												federalTaxes: {
-													id:  Math.floor(Math.random() * 1000000),
+													id:  10,
 													name: "Federal Taxes",
 													derVal: "fedtax",
 													target: "fedTaxableIncome"
 												}, 
 												socialSecurity: {
-													id: Math.floor(Math.random() * 1000000),
+													id: 11,
 													name: "Social Security",
 													value: this.SOCIAL_SECURITY_TAX_RATE,
 													derVal: "sstax",
 													target: ["fedTaxableIncome", "retirementContribution"]
 												}, 
 												medicare: {
-													id: Math.floor(Math.random() * 1000000),
+													id: 12,
 													name: "Medicare",
 													value: this.MEDICARE_TAX_RATE,
 													derVal: "sstax",
 													target: ["fedTaxableIncome", "retirementContribution"]
 												}, 
 												stateTaxes: {
-													id: Math.floor(Math.random() * 1000000),
+													id: 13,
 													name: "Maryland State Taxes",
 													derVal: "statetax",
 													target: "fedTaxableIncome"
 												}, 
 												countyTaxes: {
-													id: Math.floor(Math.random() * 1000000),
+													id: 14,
 													name: "Anne Arundel County Taxes",
 													derVal: "countytax",
 													target: "fedTaxableIncome"
@@ -98,20 +100,20 @@ $("document").ready(function(){
 											}
 										}, 
 										netPay: {
-											id: Math.floor(Math.random() * 1000000),
+											id: 15,
 											name: "Net Pay",
 											derVal: "difference",
 											target: ["fedTaxableIncome", "taxes"],
 											children: {
 												tithe: {
-													id: Math.floor(Math.random() * 1000000),
+													id: 16,
 													name: "Tithe",
 													value: this.tithePercent,
 													derVal: "percentage",
 													target: "netPay"
 												}, 
 												takeHome: {
-													id: Math.floor(Math.random() * 1000000),
+													id: 17,
 													name: "Take Home",
 													derVal: "difference",
 													target: ["netPay", "tithe"],
@@ -122,32 +124,32 @@ $("document").ready(function(){
 									}
 								}, 
 								deductions: {
-									id: Math.floor(Math.random() * 1000000),
+									id: 2,
 									name: "Deductions",
 									derVal: "rollup",
 									children: {
 										dentalInsurance: {
-											id: Math.floor(Math.random() * 1000000),
+											id: 3,
 											name: "Dental Insurance",
 											value: this.dentalInsurance
 										}, 
 										healthInsurance: {
-											id: Math.floor(Math.random() * 1000000),
+											id: 4,
 											name: "Health Insurance",
 											value: this.healthInsurance
 										}, 
 										hsaContribution: {
-											id: Math.floor(Math.random() * 1000000),
+											id: 5,
 											name: "HSA Contributions",
 											value: this.hsaContribution
 										},
 										// visionInsurance: {
-											// id:Math.floor(Math.random() * 1000000),
+											// id: 6,
 											// name: "Vision Insurance",
 											// value: visionInsurance,
 										// },
 										retirementContribution: {
-											id: Math.floor(Math.random() * 1000000),
+											id: 7,
 											name: "401K Contributions",
 											value: this.retirementContributionPercent,
 											target: "grossPay",
@@ -182,8 +184,8 @@ $("document").ready(function(){
 					child.ref = key;
 					if(node.name != undefined){//edge case for root node
 						graph.links.push({
-							source: node.name,
-							target: child.name,
+							source: node.id,
+							target: child.id,
 							value: child.value
 						});
 					}
@@ -371,10 +373,8 @@ $("document").ready(function(){
 			}
 		},
 		updated: function(){
-			console.log("called updated");
 			updateSunburstDiagram();
 			updateSankeyDiagram();
-			//mainComponent.financeTreeToString(mainComponent.financeTree, 0);
 		}
 	});
 	

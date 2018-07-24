@@ -136,7 +136,7 @@ function arcTweenText(a, i) {
 }
 
 function mouseover(d) {
-	$("#valueBox").html(d.value);
+	$("#valueBox").html("$" + (Math.round(d.value * 100) / 100));
 }
 
 // Restore everything to full opacity when moving off the visualization.
