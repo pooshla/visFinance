@@ -30,6 +30,7 @@ var color = d3.scale.category20();
 
 function drawSunburstDiagram(){
 	sunburstTree = $.extend(true, {}, mainComponent.financeTree.children.grossPay);
+	
 	//we used maps to store children, so we need to turn them into lists to make d3 happy...
 	listify(sunburstTree);
 	
@@ -37,7 +38,7 @@ function drawSunburstDiagram(){
 		.attr("width", swidth - 10)
 		.attr("height", sheight - 10)
 		.append("g")
-		.attr("transform", "translate(230,250)");	  
+		.attr("transform", "translate(230,250)");
 	
 	g = sunburstSvg.selectAll("g")
 		.data(partition.nodes(sunburstTree), function(d) { return d ? d.id : this.id; })
@@ -46,7 +47,7 @@ function drawSunburstDiagram(){
 		.attr("class", "arcg")
 		.attr("name", function(d){ return d.name})
 		.attr("id", function(d){ return d.id});
-		
+	
 	path = g.append("path")
 		.attr("d", arc)
 		.style("fill", function(d) { return color(d.name); })

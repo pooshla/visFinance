@@ -10,39 +10,30 @@ $("document").ready(function(){
 			units: "Dollars",
 			paychecksPerMonth: 2,
 			//properties are per paycheck
-			//grossIncome: 3790.91,
 			grossIncome: 3500,
 			visionInsurance: 0,
-			healthInsurance: 26.77,
-			dentalInsurance: 5.54,
-			hsaContribution: 55.77,
+			healthInsurance: 25,
+			dentalInsurance: 3,
+			disabilityInsurance: 5,
+			hsaContribution: 65,
 			retirementContributionPercent: 12,
 			tithePercent: 10,
+			budgetCounter: 70,
 			budgetData: [
 				//budget ids 50+
-				{
-					id: 50,
-					derVal: "difference", 
-					target:"siblings",
-					name:"Savings",
-					hidden: true
-				},
-				{id: 51, isBudget: true, name: "Mortgage", value: 1229.58},
-				{id: 52, isBudget: true, name: "Property Tax", value: 279.45},
-				{id: 53, isBudget: true, name: "Condo Fee", value: 157},
-				{id: 54, isBudget: true, name: "Car Insurance", value: 123.77},
-				{id: 55, isBudget: true, name: "Condo Insurance", value: 29.48},
-				{id: 56, isBudget: true, name: "Internet", value: 96.89},
+				{id: 51, isBudget: true, name: "Mortgage", value: 1300},
+				{id: 52, isBudget: true, name: "Property Tax", value: 280},
+				{id: 53, isBudget: true, name: "Condo Fee", value: 160},
+				{id: 54, isBudget: true, name: "Car Insurance", value: 110},
+				{id: 55, isBudget: true, name: "Condo Insurance", value: 30},
+				{id: 56, isBudget: true, name: "Internet", value: 100},
 				{id: 57, isBudget: true, name: "Mobile Phone", value: 50},
-				// {id: 58, isBudget: true, name: "Counselling", value: 200},
 				{id: 59, isBudget: true, name: "Electricity", value: 40},
-				{id: 60, isBudget: true, name: "Gas", value: 70},
-				{id: 61, isBudget: true, name: "Restaurants", value: 25},
-				{id: 62, isBudget: true, name: "Fast Food", value: 25},
-				{id: 63, isBudget: true, name: "Gifts", value: 25},
-				{id: 64, isBudget: true, name: "Car Services", value: 50},
-				{id: 65, isBudget: true, name: "Entertainment", value: 35},
-				{id: 66, isBudget: true, name: "Groceries", value: 70}
+				{id: 60, isBudget: true, name: "Gas", value: 115},
+				{id: 61, isBudget: true, name: "Restaurants", value: 100},
+				{id: 62, isBudget: true, name: "Fast Food", value: 75},
+				{id: 65, isBudget: true, name: "Entertainment", value: 110},
+				{id: 66, isBudget: true, name: "Groceries", value: 130}
 			]
 		},
 		computed: {
@@ -74,14 +65,14 @@ $("document").ready(function(){
 												socialSecurity: {
 													id: 11,
 													name: "Social Security",
-													value: this.SOCIAL_SECURITY_TAX_RATE,
+													baseVal: this.SOCIAL_SECURITY_TAX_RATE,
 													derVal: "sstax",
 													target: ["fedTaxableIncome", "retirementContribution"]
 												}, 
 												medicare: {
 													id: 12,
 													name: "Medicare",
-													value: this.MEDICARE_TAX_RATE,
+													baseVal: this.MEDICARE_TAX_RATE,
 													derVal: "sstax",
 													target: ["fedTaxableIncome", "retirementContribution"]
 												}, 
@@ -108,7 +99,7 @@ $("document").ready(function(){
 												tithe: {
 													id: 16,
 													name: "Tithe",
-													value: this.tithePercent,
+													baseVal: this.tithePercent,
 													derVal: "percentage",
 													target: "netPay"
 												}, 
@@ -117,7 +108,21 @@ $("document").ready(function(){
 													name: "Take Home",
 													derVal: "difference",
 													target: ["netPay", "tithe"],
-													children: this.budgetData
+													children: {
+														savings: {
+															id: 18,
+															derVal: "difference", 
+															target: ["takeHome", "expenses"],
+															name: "Savings"
+														},
+														expenses: {
+															id: 19,
+															name: "Expenses",
+															derVal: "rollup",
+															isBudget: true,
+															children: this.normalizedBudget
+														}
+													}
 												}
 											}
 										}
@@ -143,6 +148,11 @@ $("document").ready(function(){
 											name: "HSA Contributions",
 											value: this.hsaContribution
 										},
+										disabilityInsurance: {
+											id:20,
+											name: "Disability Insurance",
+											value: this.disabilityInsurance
+										},
 										// visionInsurance: {
 											// id: 6,
 											// name: "Vision Insurance",
@@ -151,7 +161,7 @@ $("document").ready(function(){
 										retirementContribution: {
 											id: 7,
 											name: "401K Contributions",
-											value: this.retirementContributionPercent,
+											baseVal: this.retirementContributionPercent,
 											target: "grossPay",
 											derVal: "percentage"
 										}
@@ -161,6 +171,14 @@ $("document").ready(function(){
 						}
 					}
 				};
+			},
+			normalizedBudget: function(){
+				var normalizedBudget = $.extend(true, {}, mainComponent.budgetData);
+				$.each(normalizedBudget, function(key, val){
+					val /= mainComponent.paychecksPerMonth;
+				});
+				
+				return normalizedBudget;
 			},
 			financeTree: function() {
 				this.calculateDerivedValues();
@@ -205,6 +223,11 @@ $("document").ready(function(){
 				var stillNeedsWork = true;
 				var financeGraph = this.flattenTree(this.financeTreeStructure);
 				
+				//clear out all nodes
+				$.each(financeGraph.nodes, function(key, node){
+					node.done = false;
+				});
+				
 				while(stillNeedsWork){
 					stillNeedsWork = false;
 					
@@ -236,7 +259,7 @@ $("document").ready(function(){
 								
 								if(target.done){
 									node.done = true;
-									node.value = (node.value / 100) * target.value;
+									node.value = (node.baseVal / 100) * target.value;
 								} else {
 									stillNeedsWork = true;
 								}
@@ -273,7 +296,7 @@ $("document").ready(function(){
 								
 								if(target1.done && target2.done){
 									node.done = true;
-									node.value = node.value * (target1.value + target2.value);//social security does not exclude 401k contributions surprisingly
+									node.value = node.baseVal * (target1.value + target2.value);//social security does not exclude 401k contributions surprisingly
 								} else {
 									stillNeedsWork = true;
 								}
@@ -282,6 +305,10 @@ $("document").ready(function(){
 									var parent = mainComponent.getNodeById(financeGraph.nodes, node.parentId);
 									var tmpSum = 0;
 									var done = true;
+									
+									console.log("siblings");
+									console.log(node);
+									
 									
 									$.each(parent.children, function(key2, val2){
 										if(val2.id != node.id){//exclude itself
@@ -293,10 +320,19 @@ $("document").ready(function(){
 										}
 									});
 									
+									console.log("tmpSum: " + tmpSum);
+									console.log("parent value: " + parent.value);
+									
 									if(done && parent.done){
+										console.log("going to make it: " + ((parent.value * mainComponent.paychecksPerMonth) - tmpSum)); 
+										console.log("going to make it: " + (((parent.value * mainComponent.paychecksPerMonth) - tmpSum) * mainComponent.paychecksPerMonth)); 
 										node.done = true;
 										//TODO: sloppy temporarily scale parent value so result will be correct
-										node.value = (parent.value * mainComponent.paychecksPerMonth) - tmpSum;
+										//node.value = (parent.value * mainComponent.paychecksPerMonth) - tmpSum;
+										if(parent.isBudget)
+											node.value = (parent.value * mainComponent.paychecksPerMonth) - tmpSum;
+										else
+											node.value = parent.value - tmpSum;
 									} else {
 										stillNeedsWork =  true;
 									}
@@ -305,7 +341,13 @@ $("document").ready(function(){
 									var target2 = mainComponent.getNodeByRef(financeGraph.nodes, node.target[1]);
 									if(target1.done && target2.done){
 										node.done = true;
-										node.value = target1.value - target2.value;
+										
+										if(target1.isBudget)
+											node.value = (target1.value / mainComponent.paychecksPerMonth) - target2.value;
+										else if(target2.isBudget)
+											node.value = target1.value - (target2.value / mainComponent.paychecksPerMonth);
+										else
+											node.value = target1.value - target2.value;
 									} else {
 										stillNeedsWork = true;
 									}
@@ -348,7 +390,7 @@ $("document").ready(function(){
 			},
 			addBudgetItem: function(){
 				this.budgetData.push({
-					id: Math.floor(Math.random() * 1000000),
+					id: this.budgetCounter++,
 					name: "test",
 					value: 200,
 					isBudget: true

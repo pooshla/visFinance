@@ -25,13 +25,14 @@ var  w = {
 };
 var ba = 79.80; // 1 weekly Allowance
 function c(m, a, p, g) { // Returns Federal Income Tax amount (Married, Allowances, Paychecks Per Month, Gross Income)
-    g -= (ba * p * a); // Pay after allowances
+	var r = 4 / p;
+    g -= (ba * r * a); // Pay after allowances
     var b = Object.keys(w[(m==1) ? 'm' : 's']); //Married?
     for (var i = 0; i < b.length; i++) { // Find bracket
-        if (b[i] * p > g)  {
-            g -= b[i-1] * p; // Get taxable income
+        if (b[i] * r > g)  {
+            g -= b[i-1] * r; // Get taxable income
             b = w[(m==1) ? 'm' : 's'][b[i-1]]; // Set bracket
-            return round2((b.p*(g)) + (b.s * p)); // Taxable income * Tax Rate + Base Tax, per IRS Circular E table 5
+            return round2((b.p*(g)) + (b.s * r)); // Taxable income * Tax Rate + Base Tax, per IRS Circular E table 5
         }
     }
 }
@@ -39,3 +40,8 @@ function c(m, a, p, g) { // Returns Federal Income Tax amount (Married, Allowanc
 function round2(val){
 	return Math.round(val * 100) / 100;
 }
+
+//weekly taxable
+//1937.87
+//fed 319.0968
+//for month 1276.3872

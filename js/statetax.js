@@ -43,25 +43,27 @@ var sdr = .15;
 var ba2 = 61.54; // 1 weekly exemption
 
 function s2(m, a, p, g) { // Returns State Income Tax amount (Married, Allowances, Paychecks Per Month, Gross Income)
+	var r = 4 / p;
 	g -= Math.max(Math.min((sdr * g), exemptions[p].max), exemptions[p].min);
-    g -= (ba2 * p * a); // Pay after allowances
+    g -= (ba2 * r * a); // Pay after allowances
     var b = Object.keys(w2[(m==1) ? 'm' : 's']); //Married?
     for (var i = 0; i < b.length; i++) { // Find bracket
-        if (b[i] * p > g)  {
-            g -= b[i-1] * p; // Get taxable income
+        if (b[i] * r > g)  {
+            g -= b[i-1] * r; // Get taxable income
             b = w2[(m==1) ? 'm' : 's'][b[i-1]]; // Set bracket
-            return round2((b.p*(g)) + (b.s * p)); // Taxable income * Tax Rate + Base Tax, per IRS Circular E table 5
+            return round2((b.p*(g)) + (b.s * r)); // Taxable income * Tax Rate + Base Tax, per IRS Circular E table 5
         }
     }
 }
 
 function c2(m, a, p, g) { // Returns County Income Tax amount (Married, Allowances, Paychecks Per Month, Gross Income)
+	var r = 4 / p;
 	g -= Math.max(Math.min((sdr * g), exemptions[p].max), exemptions[p].min);
-    g -= (ba2 * p * a); // Pay after allowances
+    g -= (ba2 * r * a); // Pay after allowances
     var b = Object.keys(w2[(m==1) ? 'm' : 's']); //Married?
     for (var i = 0; i < b.length; i++) { // Find bracket
-        if (b[i] * p > g)  {
-            g -= b[i-1] * p; // Get taxable income
+        if (b[i] * r > g)  {
+            g -= b[i-1] * r; // Get taxable income
             return round2(countyTaxRate * g); // county tax rate * taxable income
         }
     }
